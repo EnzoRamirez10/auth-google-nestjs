@@ -1,0 +1,21 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- DropIndex
+ALTER TABLE [dbo].[User] DROP CONSTRAINT [User_googleId_key];
+CREATE UNIQUE NONCLUSTERED INDEX [User_googleId_filtered_key]
+ON [dbo].[User]([googleId])
+WHERE [googleId] IS NOT NULL;
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
